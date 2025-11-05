@@ -1,5 +1,6 @@
 package com.sabonline.notes_api.controller;
 
+import com.sabonline.notes_api.dto.NotesDTO;
 import com.sabonline.notes_api.model.Notes;
 import com.sabonline.notes_api.service.INotesService;
 import org.springframework.http.ResponseEntity;
@@ -19,27 +20,27 @@ public class NotesController {
   }
 
   @GetMapping("/")
-  public ResponseEntity<List<Notes>> getAllNotes() {
+  public ResponseEntity<List<NotesDTO>> getAllNotes() {
     return ResponseEntity.ok(notesService.getAllNotes());
   }
 
   @GetMapping("/{id}")
-  public Optional<Notes> getNoteById(@PathVariable Long id) {
+  public NotesDTO getNoteById(@PathVariable Long id) {
     return notesService.getNoteById(id);
   }
 
   @PostMapping()
-  public Notes createNote(@RequestBody Notes newNote) {
+  public NotesDTO createNote(@RequestBody NotesDTO newNote) {
     return notesService.createNote(newNote);
   }
 
   @PutMapping("/{id}")
-  public Notes updateNote(@PathVariable Long id, @RequestBody Notes note) {
+  public NotesDTO updateNote(@PathVariable Long id, @RequestBody NotesDTO note) {
     return notesService.updateNote(id, note);
   }
 
   @PatchMapping("/{id}")
-  public Notes updateNoteFieldsById(@PathVariable Long id, @RequestBody Notes partialNote) {
+  public NotesDTO updateNoteFieldsById(@PathVariable Long id, @RequestBody NotesDTO partialNote) {
     return notesService.patchNote(id, partialNote);
   }
 
