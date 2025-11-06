@@ -1,6 +1,7 @@
 package com.sabonline.notes_api.service.implementation;
 
 import com.sabonline.notes_api.dto.NotesDTO;
+import com.sabonline.notes_api.mapper.NotesMapper;
 import com.sabonline.notes_api.model.Notes;
 import com.sabonline.notes_api.repository.NotesRepository;
 import com.sabonline.notes_api.service.INotesService;
@@ -15,51 +16,29 @@ import java.util.stream.Collectors;
 
 @Service
 public class NotesServiceImplementation implements INotesService {
+
+  @Autowired
+  private NotesMapper notesMapper;
+
   @Autowired
   private NotesRepository notesRepo;
 
   @Override
   public List<NotesDTO> getAllNotes() {
-    List<Notes> notes =  notesRepo.findAll();
-    return notes.stream().map(n ->  NotesDTO.builder()
-        .id(n.getId())
-        .name(n.getName())
-        .description(n.getDescription())
-        .created_at(n.getCreated_at())
-        .is_complete(n.getIs_complete())
-        .build()).collect(Collectors.toList());
+      return notesMapper.toListDTO(notesRepo.findAll());
   }
 
   @Override
   public NotesDTO getNoteById(Long id) {
-    Optional<Notes> noteOptional = notesRepo.findById(id);
-    return noteOptional.map(n -> NotesDTO.builder()
-            .id(n.getId())
-            .description(n.getDescription())
-            .created_at(n.getCreated_at())
-            .is_complete(n.getIs_complete())
-        .build()).orElse(null);
+    return notesRepo.findById(id).map(note -> notesMapper.toDTO(note)).orElse(new NotesDTO());
   }
 
   public NotesDTO createNote(NotesDTO n) {
-    Notes note = Notes.builder()
-        .id(n.getId())
-        .name(n.getName())
-        .description(n.getDescription())
-        .created_at(n.getCreated_at())
-        .is_complete(n.getIs_complete())
-        .build();
+    Notes note = notesMapper.toEntity(n);
     if (note.getCreated_at() == null) {
       note.setCreated_at(LocalDateTime.now());
     }
-    Notes nn = notesRepo.save(note);
-    return NotesDTO.builder()
-        .id(nn.getId())
-        .name(nn.getName())
-        .description(nn.getDescription())
-        .created_at(nn.getCreated_at())
-        .is_complete(nn.getIs_complete())
-        .build();
+    return notesMapper.toDTO(notesRepo.save(note));
   }
 
   @Override
@@ -70,14 +49,7 @@ public class NotesServiceImplementation implements INotesService {
       updatedNote.setName(note.getName());
       updatedNote.setDescription(note.getDescription());
       updatedNote.setIs_complete(note.getIs_complete());
-      Notes n =  notesRepo.save(updatedNote);
-      return NotesDTO.builder()
-          .id(n.getId())
-          .name(n.getName())
-          .description(n.getDescription())
-          .created_at(n.getCreated_at())
-          .is_complete(n.getIs_complete())
-          .build();
+      return notesMapper.toDTO(notesRepo.save(updatedNote)) ;
     } else  {
       throw new RuntimeException("Note not Found with id " + id);
     }
