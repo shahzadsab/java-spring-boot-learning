@@ -3,6 +3,8 @@ package com.sabonline.notes_api;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest
 class NotesApiApplicationTests {
 
@@ -10,4 +12,9 @@ class NotesApiApplicationTests {
 	void contextLoads() {
 	}
 
+
+	@Test
+	void myFirstTest() {
+		assertTrue(true);
+	}
 }

@@ -62,8 +62,11 @@ public class NotesServiceImplementation implements INotesService {
 
   @Override
   public ResponseEntity<Void> deleteNote(Long id) {
-    notesRepo.deleteById(id);
-    return null;
+    if (notesRepo.existsById(id)) {
+      notesRepo.deleteById(id);
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.notFound().build();
   }
 
 }
